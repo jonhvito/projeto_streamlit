@@ -1,0 +1,50 @@
+# 📝 Arquivos do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 🚀 Ambiente Virtual (venv e Conda)
+venv/
+.venv/
+env/
+.env/
+*.conda
+*.venv
+
+# 📦 Dependências e pacotes do Conda
+*.log
+*.cache
+*.egg-info/
+pip-selfcheck.json
+
+# 🔧 Configurações do PyCharm
+.idea/
+*.iml
+
+# 📂 Arquivos de configuração do Streamlit
+.streamlit/
+
+# 📄 Arquivos CSV e de saída
+uploaded_files/
+*.csv
+*.xlsx
+*.json
+
+# 🔐 Arquivos de credenciais e configurações ocultas
+*.env
+secrets.toml
+config.yaml
+
+# 🔥 Logs e temporários
+logs/
+*.log
+debug.log
+nohup.out
+
+# 📜 Arquivos do Jupyter Notebook
+.ipynb_checkpoints/
+
+# 🗑️ Arquivos do sistema (Windows e Mac)
+Thumbs.db
+.DS_Store
