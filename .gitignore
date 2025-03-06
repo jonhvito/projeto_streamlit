@@ -25,11 +25,6 @@ pip-selfcheck.json
 # 📂 Arquivos de configuração do Streamlit
 .streamlit/
 
-# 📄 Arquivos CSV e de saída
-uploaded_files/
-*.csv
-*.xlsx
-*.json
 
 # 🔐 Arquivos de credenciais e configurações ocultas
 *.env
