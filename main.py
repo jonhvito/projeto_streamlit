@@ -3,7 +3,7 @@ from data_loader import carregar_dados
 from filters import inicializar_filtros, aplicar_filtros
 from visualizations import exibir_indicadores, grafico_temporal, grafico_barras, mapa_usinas
 from file_manager import listar_arquivos, salvar_arquivo
-
+    
 # 🔄 Inicializar filtros no Streamlit
 inicializar_filtros()
 
@@ -96,9 +96,12 @@ if arquivos_selecionados:
             with aba_tabela:
                 st.subheader("📌 Dados Filtrados")
 
-                # Criar uma cópia do DataFrame sem as colunas de coordenadas
-                df_exibicao = df_filtrado.drop(columns=["NumCoordNEmpreendimento", "NumCoordEEmpreendimento"],
-                                               errors="ignore")
+                # Criar uma cópia do DataFrame com as colunas de coordenadas
+                df_exibicao = df_filtrado 
+
+                # Criar uma cópia do DataFrame com as colunas de coordenadas
+                #df_exibicao = df_filtrado.drop(columns=["NumCoordNEmpreendimento", "NumCoordEEmpreendimento"],
+                  #                             errors="ignore")
 
                 st.dataframe(df_exibicao)
 

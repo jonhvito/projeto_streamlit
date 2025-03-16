@@ -31,7 +31,7 @@ def carregar_dados(file_paths):
             elif 75 < potencia_kw <= 5000:
                 return "Minigeração"
             else:
-                return "Geração Convencional"
+                return "Geração"
 
         df["TipoGeracaoDistribuida"] = df["MdaPotenciaFiscalizadaKw"].apply(classificar_geracao)
         df_list.append(df)

@@ -7,7 +7,7 @@
 
 ## 📌 Índice
 - [🎯 Objetivo do Projeto](#-objetivo-do-projeto)
-- [📁 Fonte de Dados](#-fonte-de-dados)  <!-- NOVA SEÇÃO -->
+- [📁 Fonte de Dados](#-fonte-de-dados)  
 - [📦 Tecnologias Utilizadas](#-tecnologias-utilizadas)
 - [🚀 Como Configurar o Projeto](#-como-configurar-o-projeto)
 - [📂 Estrutura do Projeto](#-estrutura-do-projeto)
