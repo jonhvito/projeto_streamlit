@@ -2,7 +2,6 @@ import pandas as pd
 import os
 import csv
 
-
 def detectar_delimitador(file_path):
     """Detecta automaticamente o delimitador do arquivo CSV."""
     with open(file_path, 'r', encoding="latin1") as f:
@@ -10,14 +9,16 @@ def detectar_delimitador(file_path):
         first_line = f.readline()
         return ";" if ";" in first_line else ","
 
-
 def carregar_dados(file_paths):
-    """Carrega e processa os arquivos CSV selecionados."""
+    """Carrega e processa os arquivos CSV selecionados, filtrando apenas usinas em Operação."""
     df_list = []
     for file_path in file_paths:
         delimitador = detectar_delimitador(os.path.join("uploaded_files", file_path))
         df = pd.read_csv(os.path.join("uploaded_files", file_path), delimiter=delimitador, encoding="latin1",
                          low_memory=False)
+
+        # Filtrar apenas usinas em "Operação"
+        df = df[df["DscFaseUsina"] == "Operação"]
 
         # Conversão de tipos
         df["DatInicioVigencia"] = pd.to_datetime(df["DatInicioVigencia"], errors="coerce")

@@ -1,4 +1,5 @@
 import streamlit as st
+import datetime
 from data_loader import carregar_dados
 from filters import inicializar_filtros, aplicar_filtros
 from visualizations import exibir_indicadores, grafico_temporal, grafico_barras, mapa_usinas
@@ -24,7 +25,6 @@ arquivos_selecionados = st.multiselect("📂 Selecione os arquivos para análise
 # 📂 Criar Sidebar para os Filtros
 st.sidebar.title("⚙️ Filtros")
 
-
 # 📊 Se houver arquivos selecionados, carregar os dados
 if arquivos_selecionados:
     df = carregar_dados(arquivos_selecionados)
@@ -49,13 +49,52 @@ if arquivos_selecionados:
         if not st.session_state.fonte_combustivel:
             st.session_state.fonte_combustivel = valores_padrao_fonte
 
-        # 📅 Intervalo de Datas na Sidebar
-        st.session_state.data_inicio, st.session_state.data_fim = st.sidebar.slider(
-            "📅 Intervalo de Data de Início de Vigência",
-            int(df["DatInicioVigencia"].dropna().dt.year.min()) if "DatInicioVigencia" in df.columns else 2000,
-            int(df["DatInicioVigencia"].dropna().dt.year.max()) if "DatInicioVigencia" in df.columns else 2025,
-            (st.session_state.data_inicio or 1970, st.session_state.data_fim or 2002)
+        # 📅 Seleção principal de intervalo de meses e anos (usando selectbox)
+        st.sidebar.subheader("📅 Intervalo de Data de Início de Vigência (Mês e Ano)")
+        ano_minimo = df["DatInicioVigencia"].dropna().dt.year.min() if "DatInicioVigencia" in df.columns else 2000
+        ano_maximo = df["DatInicioVigencia"].dropna().dt.year.max() if "DatInicioVigencia" in df.columns else 2025
+        anos_disponiveis = list(range(ano_minimo, ano_maximo + 1))
+        meses = list(range(1, 13))  # 1 a 12 para os meses
+
+        # Valores padrão (1970 a 2002, ajustado ao intervalo disponível)
+        default_inicio_ano = st.session_state.get("inicio_ano", min(1970, ano_minimo)) if st.session_state.get("inicio_ano") else min(1970, ano_minimo)
+        default_inicio_mes = st.session_state.get("inicio_mes", 1) if st.session_state.get("inicio_mes") else 1
+        default_fim_ano = st.session_state.get("fim_ano", min(2002, ano_maximo)) if st.session_state.get("fim_ano") else min(2002, ano_maximo)
+        default_fim_mes = st.session_state.get("fim_mes", 12) if st.session_state.get("fim_mes") else 12
+
+        # Garantir que os valores padrão estejam dentro do intervalo disponível
+        default_inicio_ano = max(ano_minimo, min(default_inicio_ano, ano_maximo))
+        default_fim_ano = max(ano_minimo, min(default_fim_ano, ano_maximo))
+
+        # Seleção de início
+        st.sidebar.subheader("Início")
+        inicio_ano = st.sidebar.selectbox("Ano de Início", anos_disponiveis, index=anos_disponiveis.index(default_inicio_ano), key="inicio_ano_select")
+        inicio_mes = st.sidebar.selectbox("Mês de Início", meses, index=meses.index(default_inicio_mes), key="inicio_mes_select")
+
+        # Seleção de fim
+        st.sidebar.subheader("Fim")
+        fim_ano = st.sidebar.selectbox("Ano de Fim", anos_disponiveis, index=anos_disponiveis.index(default_fim_ano), key="fim_ano_select")
+        fim_mes = st.sidebar.selectbox("Mês de Fim", meses, index=meses.index(default_fim_mes), key="fim_mes_select")
+
+        # Armazenar no session_state
+        st.session_state.inicio_ano = inicio_ano
+        st.session_state.inicio_mes = inicio_mes
+        st.session_state.fim_ano = fim_ano
+        st.session_state.fim_mes = fim_mes
+
+        # 📅 Slider secundário sincronizado com os anos selecionados (1970 a 2002 como padrão)
+        ano_inicio_slider, ano_fim_slider = st.sidebar.slider(
+            "Ajuste fino com o slider (anos)",
+            ano_minimo,
+            ano_maximo,
+            (inicio_ano, fim_ano),
+            key="slider_secundario"
         )
+
+        # Sincronizar os selectbox com o slider (atualiza apenas o ano)
+        if ano_inicio_slider != inicio_ano or ano_fim_slider != fim_ano:
+            st.session_state.inicio_ano = ano_inicio_slider
+            st.session_state.fim_ano = ano_fim_slider
 
         # 🌱 Origem do Combustível na Sidebar
         st.session_state.origem_combustivel = st.sidebar.multiselect("🌱 Origem do Combustível", opcoes_origem,
@@ -95,14 +134,7 @@ if arquivos_selecionados:
 
             with aba_tabela:
                 st.subheader("📌 Dados Filtrados")
-
-                # Criar uma cópia do DataFrame com as colunas de coordenadas
                 df_exibicao = df_filtrado 
-
-                # Criar uma cópia do DataFrame com as colunas de coordenadas
-                #df_exibicao = df_filtrado.drop(columns=["NumCoordNEmpreendimento", "NumCoordEEmpreendimento"],
-                  #                             errors="ignore")
-
                 st.dataframe(df_exibicao)
 
             with aba_graficos:
