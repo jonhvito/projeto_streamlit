@@ -2,9 +2,10 @@ import streamlit as st
 import datetime
 from data_loader import carregar_dados
 from filters import inicializar_filtros, aplicar_filtros
-from visualizations import exibir_indicadores, grafico_temporal, grafico_barras, mapa_usinas
+from visualizations import exibir_indicadores, grafico_temporal, grafico_barras, mapa_usinas, grafico_barra_com_media_anual
 from file_manager import listar_arquivos, salvar_arquivo
-    
+from esda_analysis import calcular_moran_global, calcular_lisa_local, mapa_interativo_lisa
+
 # 🔄 Inicializar filtros no Streamlit
 inicializar_filtros()
 
@@ -129,24 +130,73 @@ if arquivos_selecionados:
         if "DatInicioVigencia" in df_filtrado.columns:
             df_filtrado = df_filtrado.sort_values(by=["DatInicioVigencia"])
 
-            # Criar abas para organizar as visualizações
-            aba_tabela, aba_graficos, aba_mapa = st.tabs(["📋 Tabela de Dados", "📊 Gráficos", "🗺️ Mapa Geoespacial"])
+            # Criar nova aba de Análise Espacial
+            aba_tabela, aba_graficos, aba_mapa, aba_espacial = st.tabs([
+                "📋 Tabela de Dados", "📊 Gráficos", "🗺️ Mapa Geoespacial", "📌 Análise Espacial"
+            ])
 
             with aba_tabela:
                 st.subheader("📌 Dados Filtrados")
-                df_exibicao = df_filtrado 
-                st.dataframe(df_exibicao)
+                st.dataframe(df_filtrado)
 
             with aba_graficos:
                 if not df_filtrado.empty:
                     exibir_indicadores(df_filtrado)
                     grafico_temporal(df_filtrado)
                     grafico_barras(df_filtrado)
+                    grafico_barra_com_media_anual(df_filtrado)
 
             with aba_mapa:
                 if not df_filtrado.empty:
                     tipo_mapa = st.radio("📍 Selecione o tipo de mapa:", ["Mapa Normal", "Mapa de Calor"])
                     mapa_usinas(df_filtrado, tipo_mapa)
+
+            with aba_espacial:
+                if not df_filtrado.empty:
+                    calcular_moran_global(df_filtrado)
+                    calcular_lisa_local(df_filtrado)
+                    mapa_interativo_lisa(df_filtrado)
+                    with st.expander("📘 Sobre a Análise Espacial: conceitos, interpretação e uso", expanded=False):
+                        st.markdown("""
+                    A análise realizada aqui faz uso de **técnicas de Análise Exploratória de Dados Espaciais (ESDA)**, aplicadas à variável **Potência Fiscalizada (kW)** das usinas selecionadas.
+
+                    ---
+
+                    ### 📐 **1. Índice de Moran (Global)**
+
+                    O **Moran’s I** é um índice estatístico que mede se valores semelhantes estão **espacialmente agrupados**:
+
+                    - 🔼 `I > 0`: agrupamento de valores semelhantes (autocorrelação positiva)
+                    - 🔽 `I < 0`: vizinhos com valores diferentes (dispersão)
+                    - ⚪ `I ≈ 0`: distribuição aleatória
+
+                    > 📊 O **p-valor** indica se essa autocorrelação é **estatisticamente significativa** (`p < 0.05`).
+
+                    ---
+
+                    ### 🧭 **2. LISA – Indicadores Locais de Associação Espacial**
+
+                    O **LISA (Local Indicators of Spatial Association)** calcula o **nível de autocorrelação ponto a ponto**, permitindo detectar **clusters locais**:
+
+                    | Cluster | Significado |
+                    |--------|-------------|
+                    | 🔴 **Alta–Alta (Hotspot)** | Valor alto cercado por altos |
+                    | 🔵 **Baixa–Baixa (Coldspot)** | Valor baixo cercado por baixos |
+                    | 🟠 **Baixa–Alta (Outlier)** | Valor baixo cercado por altos |
+                    | 🟢 **Alta–Baixa (Outlier)** | Valor alto cercado por baixos |
+                    | ⚪ **Não Significativo** | Nenhuma autocorrelação espacial relevante |
+
+                    ---
+
+                    ### 🎯 **3. Aplicações Práticas**
+
+                    Essa análise ajuda a:
+
+                    - Identificar **regiões com concentração energética** (hotspots)
+                    - Avaliar **desequilíbrios na distribuição geográfica**
+                    - Detectar **outliers** regionais com comportamento atípico
+                    - Orientar **políticas públicas e expansão energética**
+                                """)
 
             # 📤 Exportar dados filtrados
             st.download_button("📥 Baixar CSV", df_filtrado.to_csv(index=False), "dados_filtrados.csv", "text/csv")

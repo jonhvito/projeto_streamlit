@@ -5,3 +5,7 @@ altair
 folium
 streamlit-folium
 xlsxwriter
+geopandas
+pysal
+shapely
+seaborn

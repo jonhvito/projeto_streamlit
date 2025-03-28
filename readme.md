@@ -1,18 +1,19 @@
 
-# 📊 Dashboard Interativo de Usinas de Geração de Energia
+# ⚡ Dashboard Interativo de Usinas de Geração de Energia
 
-🔍 **Um dashboard interativo em Streamlit para análise de usinas de geração de energia no Brasil, permitindo upload, filtragem e visualização de dados com gráficos e mapas geoespaciais.**
+🔍 **Dashboard em Streamlit para análise de usinas de geração de energia no Brasil. Permite upload, filtragem e visualização de dados com gráficos, indicadores e mapas geoespaciais — incluindo análise espacial estatística.**
 
 ---
 
 ## 📌 Índice
 - [🎯 Objetivo do Projeto](#-objetivo-do-projeto)
-- [📁 Fonte de Dados](#-fonte-de-dados)  
+- [📁 Fonte de Dados](#-fonte-de-dados)
 - [📦 Tecnologias Utilizadas](#-tecnologias-utilizadas)
 - [🚀 Como Configurar o Projeto](#-como-configurar-o-projeto)
 - [📂 Estrutura do Projeto](#-estrutura-do-projeto)
 - [💡 Funcionalidades](#-funcionalidades)
 - [📊 Visualizações Disponíveis](#-visualizações-disponíveis)
+- [🧭 Análise Espacial (Moran’s I e LISA)](#-análise-espacial-morans-i-e-lisa)
 - [🛠️ Melhorias Futuras](#️-melhorias-futuras)
 - [🤝 Contribuições](#-contribuições)
 - [📞 Contato](#-contato)
@@ -21,32 +22,36 @@
 ---
 
 ## 🎯 Objetivo do Projeto
-Este projeto tem como objetivo **facilitar a análise de dados de usinas de geração de energia no Brasil**, oferecendo uma interface interativa para **gestores, investidores e pesquisadores** explorarem tendências e métricas de produção energética.
 
-✅ **Principais Benefícios:**
-- Visualização de dados em **gráficos dinâmicos e mapas geoespaciais**.
-- Filtragem avançada por estado, tipo de combustível e período.
-- Exportação de dados filtrados em CSV.
-- Interface intuitiva e acessível para usuários não técnicos.
+Este projeto visa **facilitar a análise e o monitoramento de usinas de geração distribuída no Brasil**, oferecendo uma interface interativa e acessível para que gestores, pesquisadores e investidores possam:
+
+- Visualizar dados com **gráficos e mapas georreferenciados**
+- Realizar análises por período, estado e fonte energética
+- Exportar os dados filtrados para uso externo
+- Aplicar **análise espacial estatística avançada** (ESDA)
 
 ---
 
-## 📁 Fonte de Dados  <!-- NOVA SEÇÃO -->
-Os dados utilizados nesta análise são públicos e foram obtidos do portal de dados abertos da **ANEEL (Agência Nacional de Energia Elétrica)**.  
-🔗 **Dataset utilizado**: [SIGA - Sistema de Informações de Geração da ANEEL](https://dadosabertos.aneel.gov.br/dataset/siga-sistema-de-informacoes-de-geracao-da-aneel)  
-📄 **Arquivo**: `siga-empreendimentos-geracao.csv` *(dados atualizados até 01/03/2025)*  
+## 📁 Fonte de Dados
+
+- 🔗 [SIGA - Sistema de Informações de Geração da ANEEL](https://dadosabertos.aneel.gov.br/dataset/siga-sistema-de-informacoes-de-geracao-da-aneel)
+- 📄 Arquivo: `siga-empreendimentos-geracao.csv`
+- 📅 Atualização: 01/03/2025
 
 ---
 
 ## 📦 Tecnologias Utilizadas
-| **Tecnologia**       | **Função**                                                                 |
-|-----------------------|----------------------------------------------------------------------------|
-| Python 3.9           | Linguagem principal do projeto                                            |
-| Streamlit            | Framework para construção da interface web                                |
-| Pandas               | Manipulação e limpeza de dados                                            |
-| Altair & Matplotlib  | Geração de gráficos interativos e estáticos                               |
-| Folium               | Criação de mapas geoespaciais                                             |
-| PyCharm              | Ambiente de desenvolvimento integrado (IDE)                               |
+
+| Ferramenta | Função |
+|------------|--------|
+| Python 3.9 | Linguagem principal |
+| Streamlit | Interface interativa |
+| Pandas | Manipulação de dados |
+| Altair / Matplotlib | Gráficos interativos e estáticos |
+| Folium | Mapas interativos |
+| GeoPandas, PySAL | Análise espacial |
+| Seaborn | Estética visual refinada |
+| Anaconda / PyCharm | Ambiente de desenvolvimento |
 
 ---
 
@@ -54,106 +59,122 @@ Os dados utilizados nesta análise são públicos e foram obtidos do portal de d
 
 ### Pré-requisitos
 - Python 3.9+
-- Gerenciador de pacotes `pip`
+- pip
 - Git (opcional)
 
-### Passo a Passo
-1. **Clonar o repositório**:
-   ```bash
-   git clone https://github.com/seu-usuario/seu-repositorio.git
-   cd seu-repositorio
-   ```
+### Instalação
 
-2. **Criar ambiente virtual (recomendado)**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # Linux/Mac
-   venv\Scripts\activate    # Windows
-   ```
+```bash
+git clone https://github.com/seu-usuario/seu-repositorio.git
+cd seu-repositorio
+python -m venv venv
+venv\Scripts\activate       # Windows
+# ou
+source venv/bin/activate   # Linux/Mac
+pip install -r requirements.txt
+streamlit run main.py
+```
 
-3. **Instalar dependências**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. **Executar a aplicação**:
-   ```bash
-   streamlit run main.py
-   ```
-   Acesse no navegador: [http://localhost:8501](http://localhost:8501).
+> 🔗 Acesse: [http://localhost:8501](http://localhost:8501)
 
 ---
 
 ## 📂 Estrutura do Projeto
+
 ```plaintext
 .
-├── main.py                  # Ponto de entrada da aplicação
-├── requirements.txt         # Lista de dependências
-├── README.md                # Documentação do projeto
-├── data_loader.py           # Carrega e processa dados de CSV
-├── filters.py               # Lógica de filtros (estado, combustível, data)
-├── visualizations.py        # Gera gráficos e mapas
-├── file_manager.py          # Gerencia uploads de arquivos
-└── uploaded_files/          # Armazena arquivos enviados pelo usuário
+├── main.py                  # Interface principal (Streamlit)
+├── data_loader.py           # Carregamento e processamento dos dados
+├── filters.py               # Filtros interativos (estado, fonte, período)
+├── visualizations.py        # Gráficos e mapas
+├── esda_analysis.py         # Cálculo de Moran’s I e LISA
+├── file_manager.py          # Upload e gerenciamento de arquivos
+├── requirements.txt         # Dependências do projeto
+└── uploaded_files/          # Arquivos CSV enviados pelo usuário
 ```
 
 ---
 
 ## 💡 Funcionalidades
-- **Upload de Dados**: Suporte a arquivos CSV com dados de usinas *(formato compatível com `siga-empreendimentos-geracao.csv`)*.
-- **Filtros Dinâmicos**:
-  - Seleção por estado, tipo de combustível e período.
-  - Atualização automática das visualizações.
-- **Visualizações**:
-  - Tabelas interativas com dados filtrados.
-  - Gráficos de linha (evolução temporal) e barras (comparação por estado).
-  - Mapa de calor geoespacial das usinas.
-- **Exportação**: Download dos dados filtrados em CSV.
+
+- 📥 Upload de múltiplos arquivos CSV (estrutura ANEEL)
+- 🎛️ Filtros dinâmicos por:
+  - Estado (UF)
+  - Fonte e origem de combustível
+  - Intervalo de datas (mês/ano)
+- 📊 Indicadores rápidos: total de usinas, potência média
+- 📈 Gráficos:
+  - Temporal (linha)
+  - Comparativo por estado (barra)
+  - Evolução com média histórica
+- 🗺️ Mapa interativo com pontos e heatmap
+- 🧭 Análise espacial (Moran’s I e LISA)
+- 📤 Exportação de dados filtrados
 
 ---
 
 ## 📊 Visualizações Disponíveis
-| **Tipo**               | **Descrição**                                                                 |
-|------------------------|-------------------------------------------------------------------------------|
-| 📋 Tabela de Dados     | Exibe dados brutos após aplicação dos filtros.                                |
-| 📈 Gráfico de Linha    | Mostra a evolução da potência fiscalizada ao longo do tempo.                  |
-| 📊 Gráfico de Barras   | Compara a potência total entre estados.                                       |
-| 🗺️ Mapa Interativo    | Exibe a localização geográfica das usinas com marcadores e heatmap.           |
+
+| Tipo                   | Descrição |
+|------------------------|----------|
+| 📋 Tabela de Dados     | Resultado filtrado em tabela interativa |
+| 📈 Gráfico de Linha    | Evolução da potência fiscalizada ao longo do tempo |
+| 📊 Gráfico de Barras   | Distribuição de potência por estado |
+| 📊 Barra com Média     | Potência por ano + média de anos anteriores |
+| 🗺️ Mapa Geoespacial    | Localização das usinas |
+| 🌐 Mapa LISA Interativo| Clusters espaciais com Folium (Alta-Alta, Baixa-Baixa etc.) |
+
+---
+
+## 🧭 Análise Espacial (Moran’s I e LISA)
+
+Utilizamos técnicas da **Análise Exploratória de Dados Espaciais (ESDA)** para identificar **padrões de autocorrelação geográfica** na potência das usinas.
+
+### 📐 Moran’s I (Global)
+
+- Mede se valores semelhantes estão próximos no espaço
+- `I > 0`: agrupamento | `I ≈ 0`: aleatório | `I < 0`: disperso
+- Usado para detectar **tendência espacial geral**
+
+### 🧠 LISA (Local Indicators of Spatial Association)
+
+- Detecta clusters locais:
+  - 🔴 Alta–Alta (hotspot)
+  - 🔵 Baixa–Baixa (coldspot)
+  - 🟢 Alta–Baixa (outlier)
+  - 🟠 Baixa–Alta (outlier)
+- Exibido em mapa interativo com camadas ativáveis
 
 ---
 
 ## 🛠️ Melhorias Futuras
-- [ ] Adicionar autenticação de usuário.
-- [ ] Integrar dados em tempo real via API da ANEEL.  <!-- REFERÊNCIA À FONTE -->
-- [ ] Implementar análise preditiva (ex: previsão de produção).
-- [ ] Suporte a outros formatos de arquivo (Excel, JSON).
+
+- [ ] Autenticação de usuários
+- [ ] Integração via API da ANEEL
+- [ ] Exportação de relatórios PDF/Excel
+- [ ] Previsão de geração (modelos preditivos)
+- [ ] Agrupamento por município ou região
 
 ---
 
 ## 🤝 Contribuições
-1. **Faça um fork do projeto**.
-2. **Crie uma branch**:
-   ```bash
-   git checkout -b feature/nome-da-sua-feature
-   ```
-3. **Faça commit das mudanças**:
-   ```bash
-   git commit -m "feat: adiciona nova funcionalidade"
-   ```
-4. **Envie para o repositório**:
-   ```bash
-   git push origin feature/nome-da-sua-feature
-   ```
-5. **Abra um Pull Request** e descreva suas alterações.
+
+```bash
+# Fork → Branch → Commit → Pull Request
+git checkout -b feature/nova-funcionalidade
+git commit -m "feat: adiciona análise espacial"
+git push origin feature/nova-funcionalidade
+```
 
 ---
 
 ## 📞 Contato
-- **Email**: [victorjoao8817@gmail.com](mailto:victorjoao8817@gmail.com)
-- **GitHub**: [@jonhvito](https://github.com/jonhvito)
-<!-- - **LinkedIn**: [Seu Nome](https://linkedin.com/in/seu-perfil)-->
+
+- ✉️ victorjoao8817@gmail.com  
+- 🧑‍💻 GitHub: [@jonhvito](https://github.com/jonhvito)
 
 ---
 
 ## 📜 Licença
-Este projeto está licenciado sob a [Licença MIT](LICENSE).
+
+Distribuído sob a Licença MIT. Veja o arquivo [`LICENSE`](LICENSE) para mais informações.
